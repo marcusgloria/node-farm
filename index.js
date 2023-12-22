@@ -1,6 +1,10 @@
+/////////////////////////////////////////////////////////////////////////////////////
+//MODULES
+
 const fs = require("fs");
 const http = require("http");
 const url = require("url");
+const replaceTemplate = require("./modules/replaceTemplate");
 
 /////////////////////////////////////////////////////////////////////////////////////
 //FILES
@@ -22,24 +26,8 @@ const tempProduct = fs.readFileSync(
 );
 
 /////////////////////////////////////////////////////////////////////////////////////
-// FILLING TEMPLATES
-
-const replaceTemplate = (temp, product) => {
-  let output = temp.replace(/{%PRODUCT_NAME%}/g, product.productName);
-  output = output.replace(/{%PRODUCT_IMAGE%}/g, product.image);
-  output = output.replace(/{%PRODUCT_PRICE%}/g, product.price);
-  output = output.replace(/{%PRODUCT_FROM%}/g, product.from);
-  output = output.replace(/{%PRODUCT_NUTRIENTS%}/g, product.nutrients);
-  output = output.replace(/{%PRODUCT_QTY%}/g, product.quantity);
-  output = output.replace(/{%PRODUCT_DESCRIPTION%}/g, product.description);
-  output = output.replace(/{%PRODUCT_ID%}/g, product.id);
-  if (!product.organic)
-    output = output.replace(/{%PRODUCT_isORGANIC%}/g, "not-organic");
-  return output;
-};
-
-/////////////////////////////////////////////////////////////////////////////////////
 // SERVER
+
 const server = http.createServer((req, res) => {
   const { query, pathname } = url.parse(req.url, true);
 
@@ -57,6 +45,7 @@ const server = http.createServer((req, res) => {
     res.writeHead(200, { "Content-type": "text/html" });
     res.end(output);
   } else {
+    //NOT FOUND
     res.writeHead(400, { "Content-type": "text/html" });
     res.end("<h1>Page not found!</h1>");
   }
